@@ -153,122 +153,47 @@
 </section>
 <!-- End paper abstract -->
 
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3 has-text-centered">Model Architecture</h2>
-
-      <p class="subtitle has-text-justified mb-5">
-        <strong>OmniGNN</strong> is composed of three key layers:
-        <br><br>
-        <strong>1. Structural Layer</strong> — Encodes each node using weighted metapath representations.<br>
-        <strong>2. Temporal Layer</strong> — Learns dynamic node embeddings across time windows.<br>
-        <strong>3. Prediction Layer</strong> — Outputs the next-day excess return for each stock node on trading day <em>t</em>.
-      </p>
-    </div>
-  </div>
-</section>
-
-<section class="section hero is-light">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Embedding the Graphs</h2>
-        <div class="content has-text-justified">
-          <p>
-            In a single Graph Attention Layer (GAT), we first apply a shared linear transformation, denoted by the weight matrix \( \mathbf{W} \), to both node features and edge attributes. For each node pair \( (v_i, v_j) \), the raw attention coefficient \( \beta_{ij} \), indicating the importance of node \( v_j \)'s features to node \( v_i \), is computed as:
-          </p>
-          <p>
-            \[
-            \beta_{ij} = \mathbf{a}^\top \left[ \mathbf{W} \mathbf{h}_i \,\|\, \mathbf{W} \mathbf{h}_j \,\|\, \mathbf{W} \mathbf{e}_{ij} \right],
-            \]
-            where \( \mathbf{a} \) is a learnable attention mechanism and \( \| \) denotes concatenation.
-          </p>
-          <p>
-            After applying a LeakyReLU nonlinearity (slope \( \theta = 0.2 \)), the coefficients are normalized using a softmax function:
-          </p>
-          <p>
-            \[
-            \alpha_{ij} = \frac{\exp(\text{LeakyReLU}(\beta_{ij}))}{\sum_{k \in \mathcal{N}_i} \exp(\text{LeakyReLU}(\beta_{ik}))}.
-            \]
-          </p>
-          <p>
-            The final node representations \( \mathbf{h}_i' \in \mathbb{R}^{F'} \) are then computed by aggregating the transformed neighbors across \( H \) attention heads using average pooling:
-          </p>
-          <p>
-            \[
-            \mathbf{h}_i' = \frac{1}{H} \sum_{k=1}^H \sum_{j \in \mathcal{N}_i} \alpha_{ij}^{(k)} \mathbf{W}^{(k)} \mathbf{h}_j.
-            \]
-          </p>
-
-          <figure>
-            <img src="static/images/gat.png" alt="Graph Attention Network Embedding" style="max-width: 100%; height: auto;" />
-          </figure>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3 has-text-centered">Sequencing the Graph</h2>
-
-      <p class="subtitle has-text-justified mb-5">
-        <strong>OmniGNN</strong> is composed of three key layers:
-        <br><br>
-        <strong>1. Structural Layer</strong> — Encodes each node using weighted metapath representations.<br>
-        <strong>2. Temporal Layer</strong> — Learns dynamic node embeddings across time windows.<br>
-        <strong>3. Prediction Layer</strong> — Outputs the next-day excess return for each stock node on trading day <em>t</em>.
-      </p>
-      <figure>
-        <img src="static/images/transformer.png" alt="Transformer" style="max-width: 100%; height: auto;" />
-        </figure>
-    </div>
-  </div>
-</section>
-
-
-
 
 <!-- Image carousel -->
 <section class="hero is-small">
   <div class="hero-body">
-    <div class="container">
+    <div class="container is-max-desktop">
+      
+      <!-- Section title -->
+      <h2 class="title is-3 has-text-centered">Model Architecture</h2>
+
+      <!-- Model overview -->
+      <p class="subtitle has-text-justified mb-5">
+        <strong>OmniGNN</strong> is composed of three key layers:
+        <br><br>
+        <strong>1. Structural Layer</strong> — Encodes each node using weighted metapath representations.<br>
+        <strong>2. Temporal Layer</strong> — Learns dynamic node embeddings across time windows.<br>
+        <strong>3. Prediction Layer</strong> — Outputs the next-day excess return for each stock node on trading day <em>t</em>.
+      </p>
+
+      <!-- Carousel container -->
       <div id="results-carousel" class="carousel results-carousel">
-       <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          Second image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2>
-     </div>
-     <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2>
-    </div>
-  </div>
-</div>
-</div>
+        
+        <!-- Carousel item 1 -->
+        <div class="item">
+          <img src="static/images/gat.jpg" alt="Graph Attention Network">
+          <h2 class="subtitle has-text-centered">
+            We start by obtaining context-aware node embeddings via Graph Attention Networks (GAT), modified to support multi-dimensional edge features.
+          </h2>
+        </div>
+
+        <!-- Carousel item 2 -->
+        <div class="item">
+          <img src="static/images/transformer.jpg" alt="Transformer with ALiBi">
+          <h2 class="subtitle has-text-centered">
+            To capture temporal dependencies, we employ the Transformer architecture with ALiBi, which introduces an inductive bias toward more recent graph snapshots. The sequence of node embeddings over time, denoted as \( \mathbf{H}_{v,t-\delta_t:t} \), is passed through the Transformer for temporal modeling.
+          </h2>
+        </div>
+
+      </div> <!-- end carousel -->
+      
+    </div> <!-- end container -->
+  </div> <!-- end hero-body -->
 </section>
 <!-- End image carousel -->
 
