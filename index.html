@@ -43,6 +43,20 @@
   <script src="static/js/bulma-carousel.min.js"></script>
   <script src="static/js/bulma-slider.min.js"></script>
   <script src="static/js/index.js"></script>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
 </head>
 <body>
 
@@ -139,12 +153,6 @@
 </section>
 <!-- End paper abstract -->
 
-
-Embedding the Graphs
-
-Sequencing the Graphs 
-
-
 <section class="hero is-small">
   <div class="hero-body">
     <div class="container is-max-desktop">
@@ -157,12 +165,6 @@ Sequencing the Graphs
         <strong>2. Temporal Layer</strong> — Learns dynamic node embeddings across time windows.<br>
         <strong>3. Prediction Layer</strong> — Outputs the next-day excess return for each stock node on trading day <em>t</em>.
       </p>
-
-      <div class="columns is-centered">
-        <div class="column is-four-fifths has-text-centered">
-          <img src="static/images/omnignn.png" alt="OmniGNN Model Architecture" style="max-width: 100%; height: auto;" />
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -174,8 +176,31 @@ Sequencing the Graphs
         <h2 class="title is-3">Embedding the Graphs</h2>
         <div class="content has-text-justified">
           <p>
-            The nonlinear and volatile nature of financial markets, especially during the COVID-19 period, poses significant challenges for modeling dependencies among stocks. Our framework embeds relational graphs using attention-based mechanisms to capture both structural and dynamic patterns in market behavior.
+            In a single Graph Attention Layer (GAT), we first apply a shared linear transformation, denoted by the weight matrix \( \mathbf{W} \), to both node features and edge attributes. For each node pair \( (v_i, v_j) \), the raw attention coefficient \( \beta_{ij} \), indicating the importance of node \( v_j \)'s features to node \( v_i \), is computed as:
           </p>
+          <p>
+            \[
+            \beta_{ij} = \mathbf{a}^\top \left[ \mathbf{W} \mathbf{h}_i \,\|\, \mathbf{W} \mathbf{h}_j \,\|\, \mathbf{W} \mathbf{e}_{ij} \right],
+            \]
+            where \( \mathbf{a} \) is a learnable attention mechanism and \( \| \) denotes concatenation.
+          </p>
+          <p>
+            After applying a LeakyReLU nonlinearity (slope \( \theta = 0.2 \)), the coefficients are normalized using a softmax function:
+          </p>
+          <p>
+            \[
+            \alpha_{ij} = \frac{\exp(\text{LeakyReLU}(\beta_{ij}))}{\sum_{k \in \mathcal{N}_i} \exp(\text{LeakyReLU}(\beta_{ik}))}.
+            \]
+          </p>
+          <p>
+            The final node representations \( \mathbf{h}_i' \in \mathbb{R}^{F'} \) are then computed by aggregating the transformed neighbors across \( H \) attention heads using average pooling:
+          </p>
+          <p>
+            \[
+            \mathbf{h}_i' = \frac{1}{H} \sum_{k=1}^H \sum_{j \in \mathcal{N}_i} \alpha_{ij}^{(k)} \mathbf{W}^{(k)} \mathbf{h}_j.
+            \]
+          </p>
+
           <figure>
             <img src="static/images/gat.png" alt="Graph Attention Network Embedding" style="max-width: 100%; height: auto;" />
             <figcaption class="has-text-centered">Graph embedding using attention-based mechanisms.</figcaption>
@@ -185,6 +210,7 @@ Sequencing the Graphs
     </div>
   </div>
 </section>
+
 
 <!-- Image carousel -->
 <section class="hero is-small">
